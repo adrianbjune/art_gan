@@ -1,16 +1,14 @@
-# GAN to generate art V2
+# GAN to generate art V4
 
 from __future__ import print_function, division
 from tensorflow import keras
-
 import matplotlib.pyplot as plt
-
 import sys
-
 import numpy as np
-
 import cv2
 
+
+VERSION = '04'
 
 def create_dataset():
     imgs = []
@@ -29,7 +27,7 @@ class GAN():
         self.img_cols = 128
         self.channels = 3
         self.img_shape = (self.img_rows, self.img_cols, self.channels)
-        self.latent_dim = 10
+        self.latent_dim = 100
 
         optimizer = keras.optimizers.Adam(0.0002, 0.5)
 
@@ -184,3 +182,6 @@ class GAN():
 
 gan = GAN()
 gan.train(epochs=5001, batch_size=64, sample_interval=200)
+
+gan.discriminator.save('/assets/discriminator_v{}.m'.format(VERSION))
+gan.generator.save('/assets/generator_v{}.m'.format(VERSION))
