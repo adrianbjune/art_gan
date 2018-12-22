@@ -72,21 +72,24 @@ class GAN():
         model.add(keras.layers.LeakyReLU(alpha=0.2))
         model.add(keras.layers.BatchNormalization(momentum=0.8))
         model.add(keras.layers.Dense(3072))
-        model.add(keras.layers.Reshape((32*32*3)))
+        model.add(keras.layers.Reshape((32,32,3)))
         model.add(keras.layers.UpSampling2D(2))
         model.add(keras.layers.Conv2D(128, (3, 3), strides=1, padding='valid',
                                  activation='relu'))
         model.add(keras.layers.UpSampling2D(2))
         model.add(keras.layers.Conv2D(64, (3, 3), strides=1, padding='valid',
                                  activation='relu'))
-        model.add(keras.layers.UpSampling2D(2))
+        model.add(keras.layers.Reshape(self.img_shape))
                   
-        model.summary()
+        
 
         noise = keras.layers.Input(shape=(self.latent_dim,))
         img = model(noise)
-
-        return keras.models.Model(noise, img)
+        full_model = keras.models.Model(noise, img)
+        print('GENERATOR')
+        full_model.summary()
+        
+        return full_model
 
     def build_discriminator(self):
 
@@ -95,10 +98,10 @@ class GAN():
         model.add(keras.layers.Conv2D(64, (3, 3), strides=1, padding='valid',
                                  activation='relu'))
         model.add(keras.layers.MaxPool2D(2))
-        model.add(keras.layers.Conv2D(128, (3, 3), strides=1, padding='valid',
-                                 activation='relu'))
-        model.add(keras.layers.MaxPool2D(2))
-        model.add(keras.layers.Flatten()
+#         model.add(keras.layers.Conv2D(128, (3, 3), strides=1, padding='valid',
+#                                  activation='relu'))
+#         model.add(keras.layers.MaxPool2D(2))
+        model.add(keras.layers.Flatten())
         model.add(keras.layers.Dense(1024))
         model.add(keras.layers.LeakyReLU(alpha=0.2))
         model.add(keras.layers.BatchNormalization(momentum=0.8))
@@ -107,12 +110,15 @@ class GAN():
         model.add(keras.layers.Dense(256))
         model.add(keras.layers.LeakyReLU(alpha=0.2))
         model.add(keras.layers.Dense(1, activation='sigmoid'))
-        model.summary()
+        
 
         img = keras.layers.Input(shape=self.img_shape)
         validity = model(img)
-
-        return keras.models.Model(img, validity)
+        full_model = keras.models.Model(img, validity)
+        print('DISCRIMINATOR')
+        full_model.summary()
+        
+        return full_model
 
     def train(self, epochs, batch_size=128, sample_interval=50):
 
