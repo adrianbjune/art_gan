@@ -175,4 +175,4 @@ class GAN():
 
 
 gan = GAN()
-gan.train(epochs=1000, batch_size=32, sample_interval=200)
+gan.train(epochs=5001, batch_size=64, sample_interval=200)
