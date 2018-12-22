@@ -1,12 +1,7 @@
+# GAN to generate art V2
+
 from __future__ import print_function, division
 from tensorflow import keras
-
-# from keras.layers import Input, Dense, Reshape, Flatten, Dropout
-# from keras.layers import BatchNormalization, Activation, ZeroPadding2D
-# from keras.layers.advanced_activations import LeakyReLU
-# from keras.layers.convolutional import UpSampling2D, Conv2D
-# from keras.models import Sequential, Model
-# from keras.optimizers import Adam
 
 import matplotlib.pyplot as plt
 
@@ -76,6 +71,12 @@ class GAN():
         model.add(keras.layers.Dense(1024))
         model.add(keras.layers.LeakyReLU(alpha=0.2))
         model.add(keras.layers.BatchNormalization(momentum=0.8))
+        model.add(keras.layers.Dense(4096))
+        model.add(keras.layers.LeakyReLU(alpha=0.2))
+        model.add(keras.layers.BatchNormalization(momentum=0.8))
+        model.add(keras.layers.Dense(16384))
+        model.add(keras.layers.LeakyReLU(alpha=0.2))
+        model.add(keras.layers.BatchNormalization(momentum=0.8))
         model.add(keras.layers.Dense(np.prod(self.img_shape), activation='tanh'))
         model.add(keras.layers.Reshape(self.img_shape))
 
@@ -91,6 +92,12 @@ class GAN():
         model = keras.models.Sequential()
 
         model.add(keras.layers.Flatten(input_shape=self.img_shape))
+        model.add(keras.layers.Dense(4096))
+        model.add(keras.layers.LeakyReLU(alpha=0.2))
+        model.add(keras.layers.BatchNormalization(momentum=0.8))
+        model.add(keras.layers.Dense(1024))
+        model.add(keras.layers.LeakyReLU(alpha=0.2))
+        model.add(keras.layers.BatchNormalization(momentum=0.8))
         model.add(keras.layers.Dense(512))
         model.add(keras.layers.LeakyReLU(alpha=0.2))
         model.add(keras.layers.Dense(256))
