@@ -177,7 +177,7 @@ class GAN():
                 axs[i,j].imshow(gen_imgs[cnt, :,:,0])
                 axs[i,j].axis('off')
                 cnt += 1
-        fig.savefig("gan_images/%d.png" % epoch)
+        fig.savefig("gan_images/%d.png" % epoch, dpi=300)
         plt.close()
         
 
