@@ -74,17 +74,15 @@ class GAN():
         model.add(keras.layers.Dense(3072))
         model.add(keras.layers.Reshape((32,32,3)))
         model.add(keras.layers.UpSampling2D(2))
-        model.add(keras.layers.Conv2D(128, (3, 3), strides=1, padding='valid',
-                                 activation='relu'))
+        model.add(keras.layers.Activation('relu'))
         model.add(keras.layers.UpSampling2D(2))
-        model.add(keras.layers.Conv2D(64, (3, 3), strides=1, padding='valid',
-                                 activation='relu'))
-        model.add(keras.layers.Reshape(self.img_shape))
+        model.add(keras.layers.Activation('relu'))
                   
         
 
         noise = keras.layers.Input(shape=(self.latent_dim,))
         img = model(noise)
+        model.summary()
         full_model = keras.models.Model(noise, img)
         print('GENERATOR')
         full_model.summary()
