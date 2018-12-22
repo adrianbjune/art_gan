@@ -18,18 +18,18 @@ def create_dataset():
     for i in range(11024):
         img = cv2.imread('train_1/img_{}.jpg'.format(i))
         if img is not None:
-            imgs.append(cv2.resize(img, (256,256), interpolation=cv2.INTER_AREA))
+            imgs.append(cv2.resize(img, (128,128), interpolation=cv2.INTER_AREA))
     
     print('Returning dataset')
     return np.array(imgs)
 
 class GAN():
     def __init__(self):
-        self.img_rows = 256
-        self.img_cols = 256
+        self.img_rows = 128
+        self.img_cols = 128
         self.channels = 3
         self.img_shape = (self.img_rows, self.img_cols, self.channels)
-        self.latent_dim = 100
+        self.latent_dim = 10
 
         optimizer = keras.optimizers.Adam(0.0002, 0.5)
 
@@ -71,15 +71,16 @@ class GAN():
         model.add(keras.layers.Dense(1024))
         model.add(keras.layers.LeakyReLU(alpha=0.2))
         model.add(keras.layers.BatchNormalization(momentum=0.8))
-        model.add(keras.layers.Dense(4096))
-        model.add(keras.layers.LeakyReLU(alpha=0.2))
-        model.add(keras.layers.BatchNormalization(momentum=0.8))
-        model.add(keras.layers.Dense(16384))
-        model.add(keras.layers.LeakyReLU(alpha=0.2))
-        model.add(keras.layers.BatchNormalization(momentum=0.8))
-        model.add(keras.layers.Dense(np.prod(self.img_shape), activation='tanh'))
-        model.add(keras.layers.Reshape(self.img_shape))
-
+        model.add(keras.layers.Dense(3072))
+        model.add(keras.layers.Reshape((32*32*3)))
+        model.add(keras.layers.UpSampling2D(2))
+        model.add(keras.layers.Conv2D(128, (3, 3), strides=1, padding='valid',
+                                 activation='relu'))
+        model.add(keras.layers.UpSampling2D(2))
+        model.add(keras.layers.Conv2D(64, (3, 3), strides=1, padding='valid',
+                                 activation='relu'))
+        model.add(keras.layers.UpSampling2D(2))
+                  
         model.summary()
 
         noise = keras.layers.Input(shape=(self.latent_dim,))
@@ -90,11 +91,14 @@ class GAN():
     def build_discriminator(self):
 
         model = keras.models.Sequential()
-
-        model.add(keras.layers.Flatten(input_shape=self.img_shape))
-        model.add(keras.layers.Dense(4096))
-        model.add(keras.layers.LeakyReLU(alpha=0.2))
-        model.add(keras.layers.BatchNormalization(momentum=0.8))
+    
+        model.add(keras.layers.Conv2D(64, (3, 3), strides=1, padding='valid',
+                                 activation='relu'))
+        model.add(keras.layers.MaxPool2D(2))
+        model.add(keras.layers.Conv2D(128, (3, 3), strides=1, padding='valid',
+                                 activation='relu'))
+        model.add(keras.layers.MaxPool2D(2))
+        model.add(keras.layers.Flatten()
         model.add(keras.layers.Dense(1024))
         model.add(keras.layers.LeakyReLU(alpha=0.2))
         model.add(keras.layers.BatchNormalization(momentum=0.8))
