@@ -1,4 +1,6 @@
 # GAN to generate art V4
+# Trying it with just data with the genre 'landscape'
+
 
 from __future__ import print_function, division
 from tensorflow import keras
@@ -10,16 +12,11 @@ import cv2
 
 VERSION = '04'
 
+
 def create_dataset():
-    imgs = []
-    print('Creating dataset')
-    for i in range(11024):
-        img = cv2.imread('train_1/img_{}.jpg'.format(i))
-        if img is not None:
-            imgs.append(cv2.resize(img, (128,128), interpolation=cv2.INTER_AREA))
     
-    print('Returning dataset')
-    return np.array(imgs)
+    return np.load('assets/landscape.npy')
+
 
 class GAN():
     def __init__(self):
